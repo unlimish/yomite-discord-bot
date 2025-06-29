@@ -8,6 +8,7 @@ import {
 } from "@discordjs/voice";
 import { Guild } from "discord.js";
 import { postAudioQuery, postSynthesis } from "./voicevox.js";
+import { getDictionary } from "../data/dictionary";
 
 export class TTSManager {
   private static instances = new Map<string, TTSManager>();
@@ -52,7 +53,13 @@ export class TTSManager {
       return;
     }
     this.isPlaying = true;
-    const text = this.queue.shift()!;
+    let text = this.queue.shift()!;
+
+    const dictionary = getDictionary(this.guild.id);
+    for (const word in dictionary) {
+      text = text.replace(new RegExp(word, "g"), dictionary[word]);
+    }
+
     try {
       const audioQuery = await postAudioQuery(text);
       const audio = await postSynthesis(audioQuery);
