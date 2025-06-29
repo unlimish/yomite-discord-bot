@@ -5,6 +5,7 @@ import { join } from "path";
 import { Command } from "./commands";
 import { getVoiceConnection } from "@discordjs/voice";
 import { TTSManager } from "./tts/TTSManager";
+import { isTTSEnabled } from "./commands/tts";
 
 const client = new Client({
   intents: [
@@ -62,6 +63,8 @@ client.on("messageCreate", async (message) => {
   if (message.member?.voice.channelId !== connection.joinConfig.channelId) {
     return;
   }
+
+  if (!isTTSEnabled(message.guild.id)) return;
 
   const ttsManager = TTSManager.getInstance(message.guild);
   ttsManager.addToQueue(message.content);
