@@ -1,0 +1,19 @@
+version: '3.8'
+services:
+  bot:
+    build: .
+    container_name: yomiage-bot
+    restart: always
+    depends_on:
+      - voicevox
+    volumes:
+      - ./data:/usr/src/app/data
+    env_file:
+      - .env
+
+  voicevox:
+    image: voicevox/voicevox_engine:0.14.1-cpu-ubuntu20.04
+    container_name: voicevox-engine
+    restart: always
+    ports:
+      - "50021:50021"
