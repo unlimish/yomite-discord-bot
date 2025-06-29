@@ -39,3 +39,11 @@ export async function postSynthesis(
   }
   return response.body as unknown as Readable;
 }
+
+export async function getSpeakers(): Promise<any[]> {
+  const response = await fetch(`${API_URL}/speakers`);
+  if (!response.ok) {
+    throw new Error(`Failed to get speakers: ${response.statusText}`);
+  }
+  return response.json();
+}

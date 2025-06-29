@@ -9,6 +9,7 @@ import {
 import { Guild } from "discord.js";
 import { postAudioQuery, postSynthesis } from "./voicevox.js";
 import { getDictionary } from "../data/dictionary";
+import { getSettings } from "../data/settings";
 
 export class TTSManager {
   private static instances = new Map<string, TTSManager>();
@@ -61,8 +62,11 @@ export class TTSManager {
     }
 
     try {
-      const audioQuery = await postAudioQuery(text);
-      const audio = await postSynthesis(audioQuery);
+      const settings = getSettings(this.guild.id);
+      const audioQuery = await postAudioQuery(text, settings.speaker);
+      audioQuery.speed = settings.speed;
+      audioQuery.pitch = settings.pitch;
+      const audio = await postSynthesis(audioQuery, settings.speaker);
       const resource = createAudioResource(audio);
       this.player.play(resource);
     } catch (error) {
