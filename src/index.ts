@@ -1,8 +1,10 @@
 import "dotenv/config";
-import { Client, Collection, GatewayIntentBits } from "discord.js";
+import { Client, Collection, GatewayIntentBits, Partials } from "discord.js";
 import { readdirSync } from "fs";
 import { join } from "path";
 import { Command } from "./commands";
+import { getVoiceConnection } from "@discordjs/voice";
+import { TTSManager } from "./tts/TTSManager";
 
 const client = new Client({
   intents: [
@@ -11,6 +13,7 @@ const client = new Client({
     GatewayIntentBits.GuildVoiceStates,
     GatewayIntentBits.MessageContent,
   ],
+  partials: [Partials.Channel],
 });
 
 const commands = new Collection<string, Command>();
@@ -46,6 +49,22 @@ client.on("interactionCreate", async (interaction) => {
       ephemeral: true,
     });
   }
+});
+
+client.on("messageCreate", async (message) => {
+  if (message.author.bot) return;
+  if (!message.guild) return;
+
+  const connection = getVoiceConnection(message.guild.id);
+  if (!connection) return;
+
+  // Check if the user is in the same voice channel as the bot
+  if (message.member?.voice.channelId !== connection.joinConfig.channelId) {
+    return;
+  }
+
+  const ttsManager = TTSManager.getInstance(message.guild);
+  ttsManager.addToQueue(message.content);
 });
 
 client.login(process.env.DISCORD_TOKEN);
