@@ -39,15 +39,36 @@ yomite is a high-featured, customizable text-to-speech (TTS) bot for Discord, de
     git clone https://github.com/your-username/yomite.git
     cd yomite
     ```
-2.  Create a `.env` file from the `.env.example` file and fill in your Discord bot token and client ID.
-3.  Build and run the bot with Docker Compose:
-    ```sh
-    docker-compose up --build
+2.  Create a `.env` file. You can copy the `.env.example` if it exists, or create it from scratch. Fill in your `DISCORD_TOKEN` and `CLIENT_ID`.
     ```
-4.  In a separate terminal, register the slash commands:
+    DISCORD_TOKEN=YOUR_DISCORD_BOT_TOKEN
+    CLIENT_ID=YOUR_CLIENT_ID
+    VOICEVOX_API_URL=http://voicevox:50021
+    ```
+3.  Build and run the services with Docker Compose:
+
+    ```sh
+    docker-compose up --build -d
+    ```
+
+    This command builds the bot image and starts both the `yomite` bot and the `VOICEVOX` engine containers.
+
+4.  Register the slash commands with Discord. In a separate terminal, run:
+
     ```sh
     npm run deploy
     ```
+
+    _Note: You only need to run this once, or whenever you add or modify commands._
+
+## How It Works
+
+The `docker-compose.yml` file orchestrates the services needed to run the bot:
+
+- **`bot` service**: Builds the Docker image for the yomite bot from the `Dockerfile` and runs it.
+- **`voicevox` service**: Pulls the official `voicevox/voicevox_engine` image and runs it. This provides the TTS engine that the bot communicates with.
+
+This setup means you don't need to install or run the VOICEVOX engine manually. Docker Compose handles everything.
 
 ## License
 
