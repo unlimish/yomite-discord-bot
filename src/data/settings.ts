@@ -3,16 +3,22 @@ import { join } from "path";
 
 const dataDir = join(__dirname, "..", "..", "data");
 
+export type URLHandling = "read" | "skip" | "domain";
+
 export interface VoiceSettings {
   speaker: number;
   speed: number;
   pitch: number;
+  urlHandling: URLHandling;
+  ignoredPrefixes: string[];
 }
 
 const defaultSettings: VoiceSettings = {
   speaker: 1, // Default speaker ID
   speed: 1.0,
   pitch: 0,
+  urlHandling: "read",
+  ignoredPrefixes: [],
 };
 
 function getSettingsPath(guildId: string): string {

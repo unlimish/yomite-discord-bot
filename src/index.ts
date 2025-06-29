@@ -70,4 +70,14 @@ client.on("messageCreate", async (message) => {
   ttsManager.addToQueue(message.content);
 });
 
+client.on("voiceStateUpdate", (oldState, newState) => {
+  if (oldState.channelId === newState.channelId) return; // No change in channel
+  if (oldState.member?.user.bot) return;
+
+  const ttsManager = TTSManager.getInstance(oldState.guild);
+  if (ttsManager) {
+    ttsManager.resetAutoLeaveTimeout();
+  }
+});
+
 client.login(process.env.DISCORD_TOKEN);

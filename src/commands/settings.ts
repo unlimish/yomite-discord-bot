@@ -52,6 +52,33 @@ export const SettingsCommand: Command = {
       subcommand
         .setName("list-voices")
         .setDescription("利用可能な話者の一覧を表示します。")
+    )
+    .addSubcommand((subcommand) =>
+      subcommand
+        .setName("url-handling")
+        .setDescription("URLの読み上げ方法を設定します。")
+        .addStringOption((option) =>
+          option
+            .setName("mode")
+            .setDescription("モードを選択")
+            .setRequired(true)
+            .addChoices(
+              { name: "読み上げる", value: "read" },
+              { name: "スキップ", value: "skip" },
+              { name: "ドメインのみ", value: "domain" }
+            )
+        )
+    )
+    .addSubcommand((subcommand) =>
+      subcommand
+        .setName("ignore-prefix")
+        .setDescription("読み上げを無視するプレフィックスを設定します。")
+        .addStringOption((option) =>
+          option
+            .setName("prefix")
+            .setDescription("プレフィックス")
+            .setRequired(true)
+        )
     ),
   async execute(interaction: CommandInteraction) {
     if (!interaction.isChatInputCommand()) return;
@@ -77,6 +104,32 @@ export const SettingsCommand: Command = {
       const pitch = interaction.options.getNumber("value", true);
       saveSettings(interaction.guildId, { pitch });
       await interaction.reply(`声の高さを${pitch}に変更しました。`);
+    } else if (subcommand === "url-handling") {
+      const mode = interaction.options.getString("mode", true) as
+        | "read"
+        | "skip"
+        | "domain";
+      saveSettings(interaction.guildId, { urlHandling: mode });
+      await interaction.reply(`URLの読み上げ方法を「${mode}」に設定しました。`);
+    } else if (subcommand === "ignore-prefix") {
+      const prefix = interaction.options.getString("prefix", true);
+      const settings = getSettings(interaction.guildId);
+      if (settings.ignoredPrefixes.includes(prefix)) {
+        settings.ignoredPrefixes = settings.ignoredPrefixes.filter(
+          (p) => p !== prefix
+        );
+        await interaction.reply(
+          `プレフィックス「${prefix}」を無視リストから削除しました。`
+        );
+      } else {
+        settings.ignoredPrefixes.push(prefix);
+        await interaction.reply(
+          `プレフィックス「${prefix}」を無視リストに追加しました。`
+        );
+      }
+      saveSettings(interaction.guildId, {
+        ignoredPrefixes: settings.ignoredPrefixes,
+      });
     } else if (subcommand === "list-voices") {
       const speakers = await getSpeakers();
       const embed = new EmbedBuilder()
