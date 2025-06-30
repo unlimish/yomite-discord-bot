@@ -13,7 +13,7 @@ import { postAudioQuery, postSynthesis } from "./voicevox";
 import { getDictionary } from "../data/dictionary";
 import { getSettings } from "../data/settings";
 import { getUserSettings } from "../data/userSettings";
-import emoji from "node-emoji";
+const emoji = require("node-emoji");
 
 interface TTSQueueItem {
   text: string;
