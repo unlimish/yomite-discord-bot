@@ -16,40 +16,6 @@ export const SettingsCommand: Command = {
     .setDescription('読み上げの音声設定を管理します。')
     .setDefaultMemberPermissions(PermissionFlagsBits.ManageGuild)
     .addSubcommand((subcommand) =>
-      subcommand
-        .setName('voice')
-        .setDescription('サーバー全体のデフォルト話者を変更します。')
-        .addIntegerOption((option) =>
-          option.setName('speaker').setDescription('話者ID').setRequired(true),
-        ),
-    )
-    .addSubcommand((subcommand) =>
-      subcommand
-        .setName('speed')
-        .setDescription('サーバー全体のデフォルト読み上げ速度を変更します。')
-        .addNumberOption((option) =>
-          option
-            .setName('value')
-            .setDescription('速度 (0.5-2.0)')
-            .setRequired(true)
-            .setMinValue(0.5)
-            .setMaxValue(2.0),
-        ),
-    )
-    .addSubcommand((subcommand) =>
-      subcommand
-        .setName('pitch')
-        .setDescription('サーバー全体のデフォルト声の高さを変更します。')
-        .addNumberOption((option) =>
-          option
-            .setName('value')
-            .setDescription('高さ (-0.15-0.15)')
-            .setRequired(true)
-            .setMinValue(-0.15)
-            .setMaxValue(0.15),
-        ),
-    )
-    .addSubcommand((subcommand) =>
       subcommand.setName('list-voices').setDescription('利用可能な話者の一覧を表示します。'),
     )
     .addSubcommand((subcommand) =>
@@ -138,19 +104,7 @@ export const SettingsCommand: Command = {
 
     const subcommand = interaction.options.getSubcommand();
 
-    if (subcommand === 'voice') {
-      const speaker = interaction.options.getInteger('speaker', true);
-      saveSettings(interaction.guildId, { speaker });
-      await interaction.reply(`サーバー全体のデフォルト話者をID: ${speaker}に変更しました。`);
-    } else if (subcommand === 'speed') {
-      const speed = interaction.options.getNumber('value', true);
-      saveSettings(interaction.guildId, { speed });
-      await interaction.reply(`サーバー全体のデフォルト読み上げ速度を${speed}に変更しました。`);
-    } else if (subcommand === 'pitch') {
-      const pitch = interaction.options.getNumber('value', true);
-      saveSettings(interaction.guildId, { pitch });
-      await interaction.reply(`サーバー全体のデフォルト声の高さを${pitch}に変更しました。`);
-    } else if (subcommand === 'url-handling') {
+    if (subcommand === 'url-handling') {
       const mode = interaction.options.getString('mode', true) as 'read' | 'skip' | 'domain';
       saveSettings(interaction.guildId, { urlHandling: mode });
       await interaction.reply(`URLの読み上げ方法を「${mode}」に設定しました。`);
