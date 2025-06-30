@@ -11,14 +11,10 @@ const commandFiles = readdirSync(join(__dirname, "commands")).filter(
 );
 
 for (const file of commandFiles) {
-  const command = require(`./commands/${file}`);
-  // Check if the command has the data and execute properties
-  if ("data" in command.default && "execute" in command.default) {
-    commands.push(command.default.data.toJSON());
-  } else {
-    console.log(
-      `[WARNING] The command at ${`./commands/${file}`} is missing a required "data" or "execute" property.`
-    );
+  const commandModule = require(`./commands/${file}`);
+  const command: Command = Object.values(commandModule)[0] as Command;
+  if (command.data) {
+    commands.push(command.data.toJSON());
   }
 }
 
