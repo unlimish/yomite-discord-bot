@@ -43,7 +43,7 @@ yomite is a high-featured, customizable text-to-speech (TTS) bot for Discord, de
 
     - Go to your application's page in the [Discord Developer Portal](https://discord.com/developers/applications).
     - Navigate to the "Bot" tab.
-    - Under "Privileged Gateway Intents", enable the **"Message Content Intent"**. This is required for the bot to read messages.
+    - Under "Privileged Gateway Intents", enable the **"Message Content Intent"** and the **"Server Members Intent"**. These are required for the bot to read messages and see member information.
 
 3.  **Create a `.env` file:**
     Copy the example file:
