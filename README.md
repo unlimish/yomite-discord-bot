@@ -30,22 +30,46 @@ yomite is a high-featured, customizable text-to-speech (TTS) bot for Discord, de
 
 - [Docker](https://www.docker.com/get-started)
 - [Docker Compose](https://docs.docker.com/compose/install/)
-- A Discord Bot Token and Client ID. You can get these from the [Discord Developer Portal](https://discord.com/developers/applications).
+- A Discord Bot Token and Client ID.
 
 ### Installation
 
-1.  Clone the repository:
+1.  **Clone the repository:**
     ```sh
     git clone https://github.com/your-username/yomite.git
     cd yomite
     ```
-2.  Create a `.env` file. You can copy the `.env.example` if it exists, or create it from scratch. Fill in your `DISCORD_TOKEN` and `CLIENT_ID`.
+2.  **Configure the Bot in the Discord Developer Portal:**
+
+    - Go to your application's page in the [Discord Developer Portal](https://discord.com/developers/applications).
+    - Navigate to the "Bot" tab.
+    - Under "Privileged Gateway Intents", enable the **"Message Content Intent"**. This is required for the bot to read messages.
+
+3.  **Create a `.env` file:**
+    Copy the example file:
+
+    ```sh
+    cp .env.example .env
     ```
-    DISCORD_TOKEN=YOUR_DISCORD_BOT_TOKEN
-    CLIENT_ID=YOUR_CLIENT_ID
-    VOICEVOX_API_URL=http://voicevox:50021
-    ```
-3.  Build and run the services with Docker Compose:
+
+    Then, edit the `.env` file and add your Discord bot token and client ID.
+
+    - `DISCORD_TOKEN`: Your bot's token (from the "Bot" page).
+    - `CLIENT_ID`: Your application's ID (from the "General Information" page).
+
+4.  **Generate Bot Invitation Link:**
+    In the Discord Developer Portal, go to your application, then "OAuth2" -> "URL Generator".
+
+    - Select the scopes: `bot` and `applications.commands`.
+    - Select the following "Bot Permissions":
+      - `Send Messages`
+      - `Embed Links`
+      - `Read Message History`
+      - `Connect`
+      - `Speak`
+    - Copy the generated URL and use it to invite the bot to your server.
+
+5.  **Build and run the services:**
 
     ```sh
     docker-compose up --build -d
@@ -53,12 +77,11 @@ yomite is a high-featured, customizable text-to-speech (TTS) bot for Discord, de
 
     This command builds the bot image and starts both the `yomite` bot and the `VOICEVOX` engine containers.
 
-4.  Register the slash commands with Discord. In a separate terminal, run:
-
+6.  **Deploy Commands:**
+    Register the slash commands with Discord. In a separate terminal, run:
     ```sh
     npm run deploy
     ```
-
     _Note: You only need to run this once, or whenever you add or modify commands._
 
 ## How It Works
