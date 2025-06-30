@@ -10,6 +10,11 @@
     "skipLibCheck": true,
     "moduleResolution": "node"
   },
+  "ts-node": {
+    "compilerOptions": {
+      "module": "CommonJS"
+    }
+  },
   "include": ["src/**/*"],
   "exclude": ["node_modules"]
 }

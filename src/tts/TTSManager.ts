@@ -9,7 +9,7 @@ import {
   VoiceConnectionStatus,
 } from "@discordjs/voice";
 import { Guild } from "discord.js";
-import { postAudioQuery, postSynthesis } from "./voicevox.js";
+import { postAudioQuery, postSynthesis } from "./voicevox";
 import { getDictionary } from "../data/dictionary";
 import { getSettings } from "../data/settings";
 
