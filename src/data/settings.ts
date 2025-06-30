@@ -1,14 +1,11 @@
-import { existsSync, readFileSync, writeFileSync, mkdirSync } from "fs";
-import { join } from "path";
+import { existsSync, readFileSync, writeFileSync, mkdirSync } from 'fs';
+import { join } from 'path';
 
-const dataDir = join(__dirname, "..", "..", "data");
+const dataDir = join(__dirname, '..', '..', 'data');
 
-export type URLHandling = "read" | "skip" | "domain";
+export type URLHandling = 'read' | 'skip' | 'domain';
 
 export interface VoiceSettings {
-  speaker: number;
-  speed: number;
-  pitch: number;
   outputSamplingRate: number;
   readStandardEmojis: boolean;
   urlHandling: URLHandling;
@@ -16,12 +13,9 @@ export interface VoiceSettings {
 }
 
 const defaultSettings: VoiceSettings = {
-  speaker: 1, // Default speaker ID
-  speed: 1.0,
-  pitch: 0,
   outputSamplingRate: 16000,
   readStandardEmojis: true,
-  urlHandling: "read",
+  urlHandling: 'read',
   ignoredPrefixes: [],
 };
 
@@ -30,7 +24,7 @@ function getSettingsPath(guildId: string): string {
   if (!existsSync(guildDir)) {
     mkdirSync(guildDir, { recursive: true });
   }
-  return join(guildDir, "settings.json");
+  return join(guildDir, 'settings.json');
 }
 
 export function getSettings(guildId: string): VoiceSettings {
@@ -38,14 +32,11 @@ export function getSettings(guildId: string): VoiceSettings {
   if (!existsSync(path)) {
     return defaultSettings;
   }
-  const data = readFileSync(path, "utf-8");
+  const data = readFileSync(path, 'utf-8');
   return { ...defaultSettings, ...JSON.parse(data) };
 }
 
-export function saveSettings(
-  guildId: string,
-  settings: Partial<VoiceSettings>
-): void {
+export function saveSettings(guildId: string, settings: Partial<VoiceSettings>): void {
   const currentSettings = getSettings(guildId);
   const newSettings = { ...currentSettings, ...settings };
   const path = getSettingsPath(guildId);

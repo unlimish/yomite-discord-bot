@@ -94,7 +94,9 @@ export class TTSManager {
     const serverSettings = getSettings(this.guild.id);
     const userSettings = getUserSettings(this.guild.id, userId);
 
-    const speaker = userSettings.speaker ?? serverSettings.speaker;
+    const speaker = userSettings.speaker ?? 1; // Default speaker ID
+    const speed = userSettings.speed ?? 1.0;
+    const pitch = userSettings.pitch ?? 0;
 
     // Ignored prefixes
     for (const prefix of serverSettings.ignoredPrefixes) {
@@ -143,8 +145,8 @@ export class TTSManager {
 
     try {
       const audioQuery = await postAudioQuery(text, speaker, this.guild.id);
-      audioQuery.speed = serverSettings.speed;
-      audioQuery.pitch = serverSettings.pitch;
+      audioQuery.speed = speed;
+      audioQuery.pitch = pitch;
       const audio = await postSynthesis(audioQuery, speaker);
       const resource = createAudioResource(audio);
       this.player.play(resource);

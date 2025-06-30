@@ -1,14 +1,16 @@
-import { existsSync, readFileSync, writeFileSync, mkdirSync } from "fs";
-import { join } from "path";
+import { existsSync, readFileSync, writeFileSync, mkdirSync } from 'fs';
+import { join } from 'path';
 
-const dataDir = join(__dirname, "..", "..", "data");
+const dataDir = join(__dirname, '..', '..', 'data');
 
 export interface UserSettings {
   speaker?: number;
+  speed?: number;
+  pitch?: number;
 }
 
 function getUserSettingsPath(guildId: string, userId: string): string {
-  const userDir = join(dataDir, guildId, "users");
+  const userDir = join(dataDir, guildId, 'users');
   if (!existsSync(userDir)) {
     mkdirSync(userDir, { recursive: true });
   }
@@ -20,15 +22,11 @@ export function getUserSettings(guildId: string, userId: string): UserSettings {
   if (!existsSync(path)) {
     return {};
   }
-  const data = readFileSync(path, "utf-8");
+  const data = readFileSync(path, 'utf-8');
   return JSON.parse(data);
 }
 
-export function saveUserSettings(
-  guildId: string,
-  userId: string,
-  settings: UserSettings
-): void {
+export function saveUserSettings(guildId: string, userId: string, settings: UserSettings): void {
   const path = getUserSettingsPath(guildId, userId);
   writeFileSync(path, JSON.stringify(settings, null, 2));
 }
