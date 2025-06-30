@@ -34,19 +34,7 @@ for (const file of commandFiles) {
 
 client.once('ready', () => {
   console.log(`Ready! Logged in as ${client.user?.tag}`);
-  client.user?.setPresence({
-    activities: [
-      {
-        name: '土佐日記',
-        type: ActivityType.Playing,
-        assets: {
-          largeImage: 'tosa_nikki_copied_by_teika',
-          largeText: '土佐日記',
-        },
-      } as any,
-    ], // Cast to any to bypass strict type checking for assets
-    status: 'online',
-  });
+  client.user?.setActivity('土佐日記', { type: ActivityType.Playing });
 });
 
 client.on('interactionCreate', async (interaction) => {
