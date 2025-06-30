@@ -79,6 +79,17 @@ export const SettingsCommand: Command = {
             .setDescription("プレフィックス")
             .setRequired(true)
         )
+    )
+    .addSubcommand((subcommand) =>
+      subcommand
+        .setName("sampling-rate")
+        .setDescription("出力サンプリングレートを変更します。")
+        .addIntegerOption((option) =>
+          option
+            .setName("value")
+            .setDescription("サンプリングレート")
+            .setRequired(true)
+        )
     ),
   async execute(interaction: CommandInteraction) {
     if (!interaction.isChatInputCommand()) return;
@@ -130,6 +141,12 @@ export const SettingsCommand: Command = {
       saveSettings(interaction.guildId, {
         ignoredPrefixes: settings.ignoredPrefixes,
       });
+    } else if (subcommand === "sampling-rate") {
+      const value = interaction.options.getInteger("value", true);
+      saveSettings(interaction.guildId, { outputSamplingRate: value });
+      await interaction.reply(
+        `出力サンプリングレートを${value}に変更しました。`
+      );
     } else if (subcommand === "list-voices") {
       const speakers = await getSpeakers();
       const embed = new EmbedBuilder()

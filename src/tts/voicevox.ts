@@ -1,5 +1,6 @@
 import fetch from "node-fetch";
 import { Readable } from "stream";
+import { getSettings } from "../data/settings";
 
 const API_URL = process.env.VOICEVOX_API_URL;
 
@@ -9,7 +10,12 @@ if (!API_URL) {
   );
 }
 
-export async function postAudioQuery(text: string, speaker = 1): Promise<any> {
+export async function postAudioQuery(
+  text: string,
+  speaker = 1,
+  guildId: string
+): Promise<any> {
+  const settings = getSettings(guildId);
   const response = await fetch(
     `${API_URL}/audio_query?text=${encodeURIComponent(
       text
@@ -22,7 +28,9 @@ export async function postAudioQuery(text: string, speaker = 1): Promise<any> {
   if (!response.ok) {
     throw new Error(`Failed to get audio query: ${response.statusText}`);
   }
-  return response.json();
+  const audioQuery = await response.json();
+  audioQuery.outputSamplingRate = settings.outputSamplingRate;
+  return audioQuery;
 }
 
 export async function postSynthesis(

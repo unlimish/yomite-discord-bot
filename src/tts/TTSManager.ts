@@ -106,7 +106,11 @@ export class TTSManager {
     }
 
     try {
-      const audioQuery = await postAudioQuery(text, settings.speaker);
+      const audioQuery = await postAudioQuery(
+        text,
+        settings.speaker,
+        this.guild.id
+      );
       audioQuery.speed = settings.speed;
       audioQuery.pitch = settings.pitch;
       const audio = await postSynthesis(audioQuery, settings.speaker);

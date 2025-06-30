@@ -9,6 +9,7 @@ export interface VoiceSettings {
   speaker: number;
   speed: number;
   pitch: number;
+  outputSamplingRate: number;
   urlHandling: URLHandling;
   ignoredPrefixes: string[];
 }
@@ -17,6 +18,7 @@ const defaultSettings: VoiceSettings = {
   speaker: 1, // Default speaker ID
   speed: 1.0,
   pitch: 0,
+  outputSamplingRate: 16000,
   urlHandling: "read",
   ignoredPrefixes: [],
 };
