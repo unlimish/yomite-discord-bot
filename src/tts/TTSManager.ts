@@ -100,6 +100,10 @@ export class TTSManager {
       }
     }
 
+    // Strip custom emojis
+    const customEmojiRegex = /<a?:.+?:\d+>/g;
+    text = text.replace(customEmojiRegex, "");
+
     const dictionary = getDictionary(this.guild.id);
     for (const word in dictionary) {
       text = text.replace(new RegExp(word, "g"), dictionary[word]);
