@@ -15,7 +15,7 @@ export interface VoiceSettings {
 const defaultSettings: VoiceSettings = {
   outputSamplingRate: 16000,
   readStandardEmojis: true,
-  urlHandling: 'read',
+  urlHandling: 'domain',
   ignoredPrefixes: [],
 };
 
