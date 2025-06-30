@@ -14,7 +14,6 @@ services:
     image: voicevox/voicevox_engine:cpu-amd64-ubuntu24.04-latest
     container_name: voicevox-engine
     restart: always
-    entrypoint: ["./run.sh"]
-    command: ["--cpu_num_threads=4"]
+    command: ["./run.sh", "--host", "0.0.0.0", "--cpu_num_threads=4"]
     ports:
       - "50021:50021"
