@@ -16,3 +16,5 @@ services:
     restart: always
     ports:
       - "50021:50021"
+    environment:
+      - VV_CPU_NUM_THREADS=4
