@@ -26,6 +26,7 @@ export class TTSManager {
   private queue: TTSQueueItem[] = [];
   private isPlaying = false;
   private autoLeaveTimeout: NodeJS.Timeout | null = null;
+  private textChannelId: string | null = null;
 
   private constructor(private guild: Guild) {
     this.player = createAudioPlayer({
