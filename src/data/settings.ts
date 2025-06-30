@@ -10,6 +10,7 @@ export interface VoiceSettings {
   speed: number;
   pitch: number;
   outputSamplingRate: number;
+  readStandardEmojis: boolean;
   urlHandling: URLHandling;
   ignoredPrefixes: string[];
 }
@@ -19,6 +20,7 @@ const defaultSettings: VoiceSettings = {
   speed: 1.0,
   pitch: 0,
   outputSamplingRate: 16000,
+  readStandardEmojis: true,
   urlHandling: "read",
   ignoredPrefixes: [],
 };

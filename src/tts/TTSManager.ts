@@ -12,11 +12,18 @@ import { Guild } from "discord.js";
 import { postAudioQuery, postSynthesis } from "./voicevox";
 import { getDictionary } from "../data/dictionary";
 import { getSettings } from "../data/settings";
+import { getUserSettings } from "../data/userSettings";
+import emoji from "node-emoji";
+
+interface TTSQueueItem {
+  text: string;
+  userId: string;
+}
 
 export class TTSManager {
   private static instances = new Map<string, TTSManager>();
   private player: AudioPlayer;
-  private queue: string[] = [];
+  private queue: TTSQueueItem[] = [];
   private isPlaying = false;
   private autoLeaveTimeout: NodeJS.Timeout | null = null;
 
@@ -58,8 +65,8 @@ export class TTSManager {
     return TTSManager.instances.get(guild.id)!;
   }
 
-  public addToQueue(text: string) {
-    this.queue.push(text);
+  public addToQueue(text: string, userId: string) {
+    this.queue.push({ text, userId });
     if (!this.isPlaying) {
       this.playNext();
     }
@@ -71,11 +78,17 @@ export class TTSManager {
       return;
     }
     this.isPlaying = true;
-    let text = this.queue.shift()!;
-    const settings = getSettings(this.guild.id);
+    const queueItem = this.queue.shift()!;
+    let text = queueItem.text;
+    const userId = queueItem.userId;
+
+    const serverSettings = getSettings(this.guild.id);
+    const userSettings = getUserSettings(this.guild.id, userId);
+
+    const speaker = userSettings.speaker ?? serverSettings.speaker;
 
     // Ignored prefixes
-    for (const prefix of settings.ignoredPrefixes) {
+    for (const prefix of serverSettings.ignoredPrefixes) {
       if (text.startsWith(prefix)) {
         this.isPlaying = false;
         this.playNext();
@@ -86,13 +99,13 @@ export class TTSManager {
     // URL handling
     const urlRegex = /(https?:\/\/[^\s]+)/g;
     if (urlRegex.test(text)) {
-      switch (settings.urlHandling) {
+      switch (serverSettings.urlHandling) {
         case "skip":
           this.isPlaying = false;
           this.playNext();
           return;
         case "domain":
-          text = text.replace(urlRegex, (url) => new URL(url).hostname);
+          text = text.replace(urlRegex, (url: string) => new URL(url).hostname);
           break;
         case "read":
           text = text.replace(urlRegex, "URL");
@@ -104,20 +117,25 @@ export class TTSManager {
     const customEmojiRegex = /<a?:.+?:\d+>/g;
     text = text.replace(customEmojiRegex, "");
 
+    // Handle standard emojis
+    if (serverSettings.readStandardEmojis) {
+      text = emoji.unemojify(text);
+    } else {
+      const emojiRegex =
+        /[\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{1F700}-\u{1F77F}\u{1F780}-\u{1F7FF}\u{1F800}-\u{1F8FF}\u{1F900}-\u{1F9FF}\u{1FA00}-\u{1FA6F}\u{1FA70}-\u{1FAFF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}]/gu;
+      text = text.replace(emojiRegex, "");
+    }
+
     const dictionary = getDictionary(this.guild.id);
     for (const word in dictionary) {
       text = text.replace(new RegExp(word, "g"), dictionary[word]);
     }
 
     try {
-      const audioQuery = await postAudioQuery(
-        text,
-        settings.speaker,
-        this.guild.id
-      );
-      audioQuery.speed = settings.speed;
-      audioQuery.pitch = settings.pitch;
-      const audio = await postSynthesis(audioQuery, settings.speaker);
+      const audioQuery = await postAudioQuery(text, speaker, this.guild.id);
+      audioQuery.speed = serverSettings.speed;
+      audioQuery.pitch = serverSettings.pitch;
+      const audio = await postSynthesis(audioQuery, speaker);
       const resource = createAudioResource(audio);
       this.player.play(resource);
     } catch (error) {

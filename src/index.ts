@@ -75,7 +75,7 @@ client.on("messageCreate", async (message) => {
   if (!isTTSEnabled(message.guild.id)) return;
 
   const ttsManager = TTSManager.getInstance(message.guild);
-  ttsManager.addToQueue(message.content);
+  ttsManager.addToQueue(message.content, message.author.id);
 });
 
 client.on("voiceStateUpdate", (oldState, newState) => {

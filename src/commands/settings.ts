@@ -90,6 +90,17 @@ export const SettingsCommand: Command = {
             .setDescription("サンプリングレート")
             .setRequired(true)
         )
+    )
+    .addSubcommand((subcommand) =>
+      subcommand
+        .setName("read-emojis")
+        .setDescription("標準の絵文字を読み上げるかどうかを設定します。")
+        .addBooleanOption((option) =>
+          option
+            .setName("value")
+            .setDescription("有効または無効")
+            .setRequired(true)
+        )
     ),
   async execute(interaction: CommandInteraction) {
     if (!interaction.isChatInputCommand()) return;
@@ -146,6 +157,12 @@ export const SettingsCommand: Command = {
       saveSettings(interaction.guildId, { outputSamplingRate: value });
       await interaction.reply(
         `出力サンプリングレートを${value}に変更しました。`
+      );
+    } else if (subcommand === "read-emojis") {
+      const value = interaction.options.getBoolean("value", true);
+      saveSettings(interaction.guildId, { readStandardEmojis: value });
+      await interaction.reply(
+        `標準の絵文字の読み上げを${value ? "有効" : "無効"}にしました。`
       );
     } else if (subcommand === "list-voices") {
       const speakers = await getSpeakers();
