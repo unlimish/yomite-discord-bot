@@ -14,5 +14,6 @@ services:
     image: voicevox/voicevox_engine:cpu-amd64-ubuntu24.04-latest
     container_name: voicevox-engine
     restart: always
+    command: --cpu_num_threads=4 # Adjust this number based on your CPU cores
     ports:
       - "50021:50021"
