@@ -1,23 +1,16 @@
-import {
-  CommandInteraction,
-  GuildMember,
-  SlashCommandBuilder,
-} from "discord.js";
-import {
-  joinVoiceChannel,
-  VoiceConnectionStatus,
-  entersState,
-} from "@discordjs/voice";
-import { Command } from "./index";
+import { CommandInteraction, GuildMember, SlashCommandBuilder } from 'discord.js';
+import { joinVoiceChannel, VoiceConnectionStatus, entersState } from '@discordjs/voice';
+import { Command } from './index';
+import { TTSManager } from '../tts/TTSManager';
 
 export const JoinCommand: Command = {
   data: new SlashCommandBuilder()
-    .setName("join")
-    .setDescription("Botをボイスチャンネルに参加させます。"),
+    .setName('join')
+    .setDescription('Botをボイスチャンネルに参加させます。'),
   async execute(interaction: CommandInteraction) {
     if (!(interaction.member instanceof GuildMember)) {
       await interaction.reply({
-        content: "このコマンドはサーバー内でのみ使用できます。",
+        content: 'このコマンドはサーバー内でのみ使用できます。',
         ephemeral: true,
       });
       return;
@@ -27,7 +20,7 @@ export const JoinCommand: Command = {
 
     if (!voiceChannel) {
       await interaction.reply({
-        content: "まずボイスチャンネルに参加してください。",
+        content: 'まずボイスチャンネルに参加してください。',
         ephemeral: true,
       });
       return;
@@ -41,13 +34,15 @@ export const JoinCommand: Command = {
       });
 
       await entersState(connection, VoiceConnectionStatus.Ready, 30_000);
+      const ttsManager = TTSManager.getInstance(voiceChannel.guild);
+      ttsManager.setTextChannel(interaction.channelId!);
       await interaction.reply(
-        `✅ ${voiceChannel.name}に接続しました。このチャンネルのテキストを読み上げます。`
+        `✅ ${voiceChannel.name}に接続しました。このチャンネルのテキストを読み上げます。`,
       );
     } catch (error) {
       console.error(error);
       await interaction.reply({
-        content: "ボイスチャンネルへの接続に失敗しました。",
+        content: 'ボイスチャンネルへの接続に失敗しました。',
         ephemeral: true,
       });
     }

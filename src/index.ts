@@ -1,11 +1,11 @@
-import "dotenv/config";
-import { Client, Collection, GatewayIntentBits, Partials } from "discord.js";
-import { readdirSync } from "fs";
-import { join } from "path";
-import { Command } from "./commands";
-import { getVoiceConnection } from "@discordjs/voice";
-import { TTSManager } from "./tts/TTSManager";
-import { isTTSEnabled } from "./commands/tts";
+import 'dotenv/config';
+import { Client, Collection, GatewayIntentBits, Partials } from 'discord.js';
+import { readdirSync } from 'fs';
+import { join } from 'path';
+import { Command } from './commands';
+import { getVoiceConnection } from '@discordjs/voice';
+import { TTSManager } from './tts/TTSManager';
+import { isTTSEnabled } from './commands/tts';
 
 const client = new Client({
   intents: [
@@ -19,11 +19,9 @@ const client = new Client({
 });
 
 const commands = new Collection<string, Command>();
-const commandFiles = readdirSync(join(__dirname, "commands")).filter(
+const commandFiles = readdirSync(join(__dirname, 'commands')).filter(
   (file) =>
-    (file.endsWith(".ts") || file.endsWith(".js")) &&
-    file !== "index.ts" &&
-    file !== "index.js"
+    (file.endsWith('.ts') || file.endsWith('.js')) && file !== 'index.ts' && file !== 'index.js',
 );
 
 for (const file of commandFiles) {
@@ -34,11 +32,11 @@ for (const file of commandFiles) {
   }
 }
 
-client.once("ready", () => {
+client.once('ready', () => {
   console.log(`Ready! Logged in as ${client.user?.tag}`);
 });
 
-client.on("interactionCreate", async (interaction) => {
+client.on('interactionCreate', async (interaction) => {
   if (!interaction.isCommand()) return;
 
   console.log(`Received command: ${interaction.commandName}`);
@@ -54,18 +52,26 @@ client.on("interactionCreate", async (interaction) => {
   } catch (error) {
     console.error(error);
     await interaction.reply({
-      content: "コマンドの実行中にエラーが発生しました。",
+      content: 'コマンドの実行中にエラーが発生しました。',
       ephemeral: true,
     });
   }
 });
 
-client.on("messageCreate", async (message) => {
+client.on('messageCreate', async (message) => {
   if (message.author.bot) return;
   if (!message.guild) return;
 
   const connection = getVoiceConnection(message.guild.id);
   if (!connection) return;
+
+  const ttsManager = TTSManager.getInstance(message.guild);
+  const boundTextChannelId = ttsManager.getTextChannelId();
+
+  // Only read messages from the bound text channel
+  if (!boundTextChannelId || message.channel.id !== boundTextChannelId) {
+    return;
+  }
 
   // Check if the user is in the same voice channel as the bot
   if (message.member?.voice.channelId !== connection.joinConfig.channelId) {
@@ -74,11 +80,10 @@ client.on("messageCreate", async (message) => {
 
   if (!isTTSEnabled(message.guild.id)) return;
 
-  const ttsManager = TTSManager.getInstance(message.guild);
   ttsManager.addToQueue(message.content, message.author.id);
 });
 
-client.on("voiceStateUpdate", (oldState, newState) => {
+client.on('voiceStateUpdate', (oldState, newState) => {
   if (oldState.channelId === newState.channelId) return; // No change in channel
   if (oldState.member?.user.bot) return;
 

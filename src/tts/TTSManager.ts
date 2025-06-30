@@ -7,13 +7,13 @@ import {
   getVoiceConnection,
   NoSubscriberBehavior,
   VoiceConnectionStatus,
-} from "@discordjs/voice";
-import { Guild } from "discord.js";
-import { postAudioQuery, postSynthesis } from "./voicevox";
-import { getDictionary } from "../data/dictionary";
-import { getSettings } from "../data/settings";
-import { getUserSettings } from "../data/userSettings";
-const emoji = require("node-emoji");
+} from '@discordjs/voice';
+import { Guild } from 'discord.js';
+import { postAudioQuery, postSynthesis } from './voicevox';
+import { getDictionary } from '../data/dictionary';
+import { getSettings } from '../data/settings';
+import { getUserSettings } from '../data/userSettings';
+const emoji = require('node-emoji');
 
 interface TTSQueueItem {
   text: string;
@@ -66,6 +66,14 @@ export class TTSManager {
     return TTSManager.instances.get(guild.id)!;
   }
 
+  public setTextChannel(channelId: string) {
+    this.textChannelId = channelId;
+  }
+
+  public getTextChannelId(): string | null {
+    return this.textChannelId;
+  }
+
   public addToQueue(text: string, userId: string) {
     this.queue.push({ text, userId });
     if (!this.isPlaying) {
@@ -101,38 +109,36 @@ export class TTSManager {
     const urlRegex = /(https?:\/\/[^\s]+)/g;
     if (urlRegex.test(text)) {
       switch (serverSettings.urlHandling) {
-        case "skip":
+        case 'skip':
           this.isPlaying = false;
           this.playNext();
           return;
-        case "domain":
+        case 'domain':
           text = text.replace(urlRegex, (url: string) => new URL(url).hostname);
           break;
-        case "read":
-          text = text.replace(urlRegex, "URL");
+        case 'read':
+          text = text.replace(urlRegex, 'URL');
           break;
       }
     }
 
     // Strip custom emojis
     const customEmojiRegex = /<a?:.+?:\d+>/g;
-    text = text.replace(customEmojiRegex, "");
+    text = text.replace(customEmojiRegex, '');
 
     // Handle standard emojis
     if (serverSettings.readStandardEmojis) {
       text = emoji.unemojify(text);
-      console.log(text);
-      text = text.replace(/:([\w_]+):/g, (match, p1) => p1.replace(/_/g, " "));
-      console.log(text);
+      text = text.replace(/:([\w_]+):/g, (match, p1) => p1.replace(/_/g, ' '));
     } else {
       const emojiRegex =
         /[\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{1F700}-\u{1F77F}\u{1F780}-\u{1F7FF}\u{1F800}-\u{1F8FF}\u{1F900}-\u{1F9FF}\u{1FA00}-\u{1FA6F}\u{1FA70}-\u{1FAFF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}]/gu;
-      text = text.replace(emojiRegex, "");
+      text = text.replace(emojiRegex, '');
     }
 
     const dictionary = getDictionary(this.guild.id);
     for (const word in dictionary) {
-      text = text.replace(new RegExp(word, "g"), dictionary[word]);
+      text = text.replace(new RegExp(word, 'g'), dictionary[word]);
     }
 
     try {
@@ -143,7 +149,7 @@ export class TTSManager {
       const resource = createAudioResource(audio);
       this.player.play(resource);
     } catch (error) {
-      console.error("Error during TTS playback:", error);
+      console.error('Error during TTS playback:', error);
       this.isPlaying = false;
       this.playNext(); // Try next item in queue
     }
@@ -165,9 +171,7 @@ export class TTSManager {
     this.autoLeaveTimeout = setTimeout(() => {
       const connection = getVoiceConnection(this.guild.id);
       if (connection && connection.joinConfig.channelId) {
-        const channel = this.guild.channels.cache.get(
-          connection.joinConfig.channelId
-        );
+        const channel = this.guild.channels.cache.get(connection.joinConfig.channelId);
         if (channel && channel.isVoiceBased() && channel.members.size === 1) {
           connection.destroy();
         }
