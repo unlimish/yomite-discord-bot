@@ -1,4 +1,4 @@
-import { existsSync, readFileSync, writeFileSync } from "fs";
+import { existsSync, readFileSync, writeFileSync, mkdirSync } from "fs";
 import { join } from "path";
 
 const dataDir = join(__dirname, "..", "..", "data");
@@ -10,7 +10,7 @@ interface Dictionary {
 function getDictionaryPath(guildId: string): string {
   const guildDir = join(dataDir, guildId);
   if (!existsSync(guildDir)) {
-    // mkdirSync(guildDir, { recursive: true });
+    mkdirSync(guildDir, { recursive: true });
   }
   return join(guildDir, "dictionary.json");
 }
