@@ -38,9 +38,13 @@ client.once("ready", () => {
 client.on("interactionCreate", async (interaction) => {
   if (!interaction.isCommand()) return;
 
+  console.log(`Received command: ${interaction.commandName}`);
   const command = commands.get(interaction.commandName);
 
-  if (!command) return;
+  if (!command) {
+    console.error(`No command matching ${interaction.commandName} was found.`);
+    return;
+  }
 
   try {
     await command.execute(interaction);
