@@ -1,4 +1,3 @@
-version: '3.8'
 services:
   bot:
     build: .
@@ -12,7 +11,7 @@ services:
       - .env
 
   voicevox:
-    image: voicevox/voicevox_engine:0.14.1-cpu-ubuntu20.04
+    image: voicevox/voicevox_engine:cpu-amd64-ubuntu24.04-latest
     container_name: voicevox-engine
     restart: always
     ports:
