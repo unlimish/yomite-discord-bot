@@ -1,5 +1,5 @@
 import 'dotenv/config';
-import { Client, Collection, GatewayIntentBits, Partials } from 'discord.js';
+import { Client, Collection, GatewayIntentBits, Partials, ActivityType } from 'discord.js';
 import { readdirSync } from 'fs';
 import { join } from 'path';
 import { Command } from './commands';
@@ -34,6 +34,7 @@ for (const file of commandFiles) {
 
 client.once('ready', () => {
   console.log(`Ready! Logged in as ${client.user?.tag}`);
+  client.user?.setActivity('土佐日記', { type: ActivityType.Playing });
 });
 
 client.on('interactionCreate', async (interaction) => {
