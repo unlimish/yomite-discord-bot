@@ -7,7 +7,10 @@ import { Command } from "./commands";
 
 const commands = [];
 const commandFiles = readdirSync(join(__dirname, "commands")).filter(
-  (file) => file.endsWith(".ts") && file !== "index.ts"
+  (file) =>
+    (file.endsWith(".ts") || file.endsWith(".js")) &&
+    file !== "index.ts" &&
+    file !== "index.js"
 );
 
 for (const file of commandFiles) {
