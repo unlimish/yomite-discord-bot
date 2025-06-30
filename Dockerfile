@@ -8,7 +8,7 @@ WORKDIR /usr/src/app
 COPY package*.json ./
 
 # Install any needed packages
-RUN npm install
+RUN apk add --no-cache ffmpeg && npm install
 
 # Bundle app source
 COPY . .
