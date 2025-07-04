@@ -8,7 +8,7 @@ export const JoinCommand: Command = {
     .setName('join')
     .setDescription('Botをボイスチャンネルに参加させます。'),
   async execute(interaction: CommandInteraction) {
-    await interaction.deferReply({ flags: MessageFlags.Ephemeral }); // Acknowledge the interaction immediately
+    await interaction.deferReply(); // Acknowledge the interaction immediately
     if (!(interaction.member instanceof GuildMember)) {
       await interaction.editReply({
         content: 'このコマンドはサーバー内でのみ使用できます。',
