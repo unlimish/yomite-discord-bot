@@ -8,10 +8,10 @@ export const JoinCommand: Command = {
     .setName('join')
     .setDescription('Botをボイスチャンネルに参加させます。'),
   async execute(interaction: CommandInteraction) {
+    await interaction.deferReply({ ephemeral: true }); // Acknowledge the interaction immediately
     if (!(interaction.member instanceof GuildMember)) {
-      await interaction.reply({
+      await interaction.editReply({
         content: 'このコマンドはサーバー内でのみ使用できます。',
-        ephemeral: true,
       });
       return;
     }
@@ -19,9 +19,8 @@ export const JoinCommand: Command = {
     const voiceChannel = interaction.member.voice.channel;
 
     if (!voiceChannel) {
-      await interaction.reply({
+      await interaction.editReply({
         content: 'まずボイスチャンネルに参加してください。',
-        ephemeral: true,
       });
       return;
     }
@@ -36,14 +35,13 @@ export const JoinCommand: Command = {
       await entersState(connection, VoiceConnectionStatus.Ready, 30_000);
       const ttsManager = TTSManager.getInstance(voiceChannel.guild);
       ttsManager.setTextChannel(interaction.channelId!);
-      await interaction.reply(
+      await interaction.editReply(
         `✅ ${voiceChannel.name}に接続しました。このチャンネルのテキストを読み上げます。`,
       );
     } catch (error) {
       console.error(error);
-      await interaction.reply({
+      await interaction.editReply({
         content: 'ボイスチャンネルへの接続に失敗しました。',
-        ephemeral: true,
       });
     }
   },

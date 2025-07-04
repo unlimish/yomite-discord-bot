@@ -95,60 +95,59 @@ export const SettingsCommand: Command = {
   async execute(interaction: CommandInteraction) {
     if (!interaction.isChatInputCommand()) return;
     if (!interaction.guildId) {
-      await interaction.reply({
-        content: 'このコマンドはサーバー内でのみ使用できます。',
-        ephemeral: true,
-      });
+      await interaction.deferReply({ ephemeral: true });
+      await interaction.editReply({ content: 'このコマンドはサーバー内でのみ使用できます。' });
       return;
     }
 
     const subcommand = interaction.options.getSubcommand();
 
     if (subcommand === 'url-handling') {
+      await interaction.deferReply({ ephemeral: true });
       const mode = interaction.options.getString('mode', true) as 'read' | 'skip' | 'domain';
       saveSettings(interaction.guildId, { urlHandling: mode });
-      await interaction.reply(`URLの読み上げ方法を「${mode}」に設定しました。`);
+      await interaction.editReply(`URLの読み上げ方法を「${mode}」に設定しました。`);
     } else if (subcommand === 'ignore-prefix') {
+      await interaction.deferReply({ ephemeral: true });
       const prefix = interaction.options.getString('prefix', true);
       const settings = getSettings(interaction.guildId);
       if (settings.ignoredPrefixes.includes(prefix)) {
         settings.ignoredPrefixes = settings.ignoredPrefixes.filter((p) => p !== prefix);
-        await interaction.reply(`プレフィックス「${prefix}」を無視リストから削除しました。`);
+        await interaction.editReply(`プレフィックス「${prefix}」を無視リストから削除しました。`);
       } else {
         settings.ignoredPrefixes.push(prefix);
-        await interaction.reply(`プレフィックス「${prefix}」を無視リストに追加しました。`);
+        await interaction.editReply(`プレフィックス「${prefix}」を無視リストに追加しました。`);
       }
       saveSettings(interaction.guildId, { ignoredPrefixes: settings.ignoredPrefixes });
     } else if (subcommand === 'sampling-rate') {
+      await interaction.deferReply({ ephemeral: true });
       const value = interaction.options.getInteger('value', true);
       saveSettings(interaction.guildId, { outputSamplingRate: value });
-      await interaction.reply(`出力サンプリングレートを${value}に変更しました。`);
+      await interaction.editReply(`出力サンプリングレートを${value}に変更しました。`);
     } else if (subcommand === 'read-emojis') {
+      await interaction.deferReply({ ephemeral: true });
       const value = interaction.options.getBoolean('value', true);
       saveSettings(interaction.guildId, { readStandardEmojis: value });
-      await interaction.reply(`標準の絵文字の読み上げを${value ? '有効' : '無効'}にしました。`);
+      await interaction.editReply(`標準の絵文字の読み上げを${value ? '有効' : '無効'}にしました。`);
     } else if (subcommand === 'myvoice') {
+      await interaction.deferReply({ ephemeral: true });
       const speaker = interaction.options.getInteger('speaker', true);
       saveUserSettings(interaction.guildId, interaction.user.id, { speaker });
-      await interaction.reply({
+      await interaction.editReply({
         content: `あなたの読み上げ音声をID: ${speaker}に変更しました。`,
-        ephemeral: true,
       });
     } else if (subcommand === 'myspeed') {
+      await interaction.deferReply({ ephemeral: true });
       const speed = interaction.options.getNumber('value', true);
       saveUserSettings(interaction.guildId, interaction.user.id, { speed });
-      await interaction.reply({
-        content: `あなたの読み上げ速度を${speed}に変更しました。`,
-        ephemeral: true,
-      });
+      await interaction.editReply({ content: `あなたの読み上げ速度を${speed}に変更しました。` });
     } else if (subcommand === 'mypitch') {
+      await interaction.deferReply({ ephemeral: true });
       const pitch = interaction.options.getNumber('value', true);
       saveUserSettings(interaction.guildId, interaction.user.id, { pitch });
-      await interaction.reply({
-        content: `あなたの声の高さを${pitch}に変更しました。`,
-        ephemeral: true,
-      });
+      await interaction.editReply({ content: `あなたの声の高さを${pitch}に変更しました。` });
     } else if (subcommand === 'list-voices') {
+      await interaction.deferReply({ ephemeral: true });
       const speakers = await getSpeakers();
       const embed = new EmbedBuilder().setTitle('利用可能な話者').setColor(0x0099ff);
 
@@ -162,7 +161,7 @@ export const SettingsCommand: Command = {
 
       embed.setDescription(description);
 
-      await interaction.reply({ embeds: [embed], ephemeral: true });
+      await interaction.editReply({ embeds: [embed] });
     }
   },
 };
