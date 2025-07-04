@@ -152,7 +152,7 @@ export const SettingsCommand: Command = {
         }
       }
 
-      description += `\n[サンプルボイス](https://voicevox.hiroshiba.jp)\n`;
+      description += `\n[サンプルボイスリスト](https://voicevox.hiroshiba.jp/#characters)\n`;
       embed.setDescription(description);
 
       await interaction.editReply({ embeds: [embed] });
