@@ -150,6 +150,7 @@ export const SettingsCommand: Command = {
         for (const style of speaker.styles) {
           description += `  - ID: ${style.id}, スタイル: ${style.name}\n`;
         }
+        description += `\n[サンプルボイス](https://voicevox.hiroshiba.jp)\n`;
       }
 
       embed.setDescription(description);
