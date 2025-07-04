@@ -4,6 +4,7 @@ import {
   EmbedBuilder,
   PermissionFlagsBits,
   ChatInputCommandInteraction,
+  MessageFlags,
 } from 'discord.js';
 import { Command } from './index';
 import { getDictionary, addWord, removeWord } from '../data/dictionary';
@@ -36,7 +37,7 @@ export const DictionaryCommand: Command = {
       subcommand.setName('list').setDescription('登録されている単語の一覧を表示します。'),
     ),
   async execute(interaction: CommandInteraction) {
-    await interaction.deferReply({ ephemeral: true });
+    await interaction.deferReply({ flags: MessageFlags.Ephemeral });
     if (!interaction.isChatInputCommand()) return;
     if (!interaction.guildId) {
       await interaction.editReply({

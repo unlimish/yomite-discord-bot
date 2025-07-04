@@ -1,4 +1,4 @@
-import { CommandInteraction, GuildMember, SlashCommandBuilder } from 'discord.js';
+import { CommandInteraction, GuildMember, SlashCommandBuilder, MessageFlags } from 'discord.js';
 import { joinVoiceChannel, VoiceConnectionStatus, entersState } from '@discordjs/voice';
 import { Command } from './index';
 import { TTSManager } from '../tts/TTSManager';
@@ -8,7 +8,7 @@ export const JoinCommand: Command = {
     .setName('join')
     .setDescription('Botをボイスチャンネルに参加させます。'),
   async execute(interaction: CommandInteraction) {
-    await interaction.deferReply({ ephemeral: true }); // Acknowledge the interaction immediately
+    await interaction.deferReply({ flags: MessageFlags.Ephemeral }); // Acknowledge the interaction immediately
     if (!(interaction.member instanceof GuildMember)) {
       await interaction.editReply({
         content: 'このコマンドはサーバー内でのみ使用できます。',

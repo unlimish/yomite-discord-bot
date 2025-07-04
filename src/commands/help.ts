@@ -1,4 +1,4 @@
-import { CommandInteraction, SlashCommandBuilder, EmbedBuilder } from 'discord.js';
+import { CommandInteraction, SlashCommandBuilder, EmbedBuilder, MessageFlags } from 'discord.js';
 import { Command } from './index';
 import { readdirSync } from 'fs';
 import { join } from 'path';
@@ -8,7 +8,7 @@ export const HelpCommand: Command = {
     .setName('help')
     .setDescription('利用可能なすべてのコマンドを表示します。'),
   async execute(interaction: CommandInteraction) {
-    await interaction.deferReply({ ephemeral: true });
+    await interaction.deferReply({ flags: MessageFlags.Ephemeral });
     const commandFiles = readdirSync(__dirname).filter(
       (file) => file.endsWith('.ts') && file !== 'index.ts' && file !== 'help.ts',
     );

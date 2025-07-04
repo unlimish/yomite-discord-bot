@@ -1,4 +1,4 @@
-import { CommandInteraction, SlashCommandBuilder, EmbedBuilder } from 'discord.js';
+import { CommandInteraction, SlashCommandBuilder, EmbedBuilder, MessageFlags } from 'discord.js';
 import { Command } from './index';
 import { getVoiceConnection } from '@discordjs/voice';
 import { TTSManager } from '../tts/TTSManager';
@@ -7,7 +7,7 @@ import { isTTSEnabled } from './tts';
 export const StatusCommand: Command = {
   data: new SlashCommandBuilder().setName('status').setDescription('Botの現在の状態を表示します。'),
   async execute(interaction: CommandInteraction) {
-    await interaction.deferReply({ ephemeral: true });
+    await interaction.deferReply({ flags: MessageFlags.Ephemeral });
     if (!interaction.guild) {
       await interaction.editReply({ content: 'このコマンドはサーバー内でのみ使用できます。' });
       return;

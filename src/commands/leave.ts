@@ -1,4 +1,4 @@
-import { CommandInteraction, SlashCommandBuilder } from 'discord.js';
+import { CommandInteraction, SlashCommandBuilder, MessageFlags } from 'discord.js';
 import { getVoiceConnection } from '@discordjs/voice';
 import { Command } from './index';
 
@@ -7,7 +7,7 @@ export const LeaveCommand: Command = {
     .setName('leave')
     .setDescription('Botをボイスチャンネルから切断させます。'),
   async execute(interaction: CommandInteraction) {
-    await interaction.deferReply({ ephemeral: true });
+    await interaction.deferReply({ flags: MessageFlags.Ephemeral });
     if (!interaction.guildId) {
       await interaction.editReply({
         content: 'このコマンドはサーバー内でのみ使用できます。',
