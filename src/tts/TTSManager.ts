@@ -63,7 +63,13 @@ export class TTSManager {
     if (!TTSManager.instances.has(guild.id)) {
       TTSManager.instances.set(guild.id, new TTSManager(guild));
     }
-    return TTSManager.instances.get(guild.id)!;
+    const instance = TTSManager.instances.get(guild.id)!;
+    const connection = getVoiceConnection(guild.id);
+    if (connection && connection.state.status !== VoiceConnectionStatus.Ready) {
+      // Ensure player is subscribed to the current connection if it's ready
+      connection.subscribe(instance.player);
+    }
+    return instance;
   }
 
   public setTextChannel(channelId: string) {
